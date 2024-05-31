@@ -5,7 +5,7 @@
 <template>
     <div class="container-head">
         <h1>BOOLFLIX</h1>
-        <input class="find" type="text" placeholder="cerca qualcosa!">
+
     </div>
 </template>
 
@@ -17,10 +17,5 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.find {
-    margin-right: 2rem;
-    height: 2rem;
 }
 </style>
