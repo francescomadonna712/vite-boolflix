@@ -57,6 +57,12 @@ export default {
         },
         getImageUrl(path) {
             return path ? `https://image.tmdb.org/t/p/w342${path}` : 'path/to/default/image.jpg';
+        },
+        getStars(vote) {
+            const fullStars = Math.floor(vote / 2); // Assume il voto è su una scala di 10, quindi lo dividi per 2 per ottenere stelle su una scala di 5
+            const halfStar = vote % 2 >= 1 ? 1 : 0; // Verifica se c'è una mezza stella
+            const emptyStars = 5 - fullStars - halfStar; // Calcola il numero di stelle vuote
+            return '★'.repeat(fullStars) + '☆'.repeat(emptyStars);
         }
     }
 };
@@ -66,24 +72,23 @@ export default {
 <template>
     <div>
         <h1>Serie TV</h1>
-        <div class="movie-sc"> <input v-model="searchQuery" placeholder="Cerca una serie TV..." />
+        <div class="series-sc"> <input v-model="searchQuery" placeholder="Cerca una serie TV..." />
             <button @click="searchTVShows">Cerca</button>
         </div>
 
-        <ul>
-            <li v-for="tvShow in tvShows" :key="tvShow.id">
-                <div class="container-card"></div>
-                <div class="card">
+        <ul class="cards">
+            <li v-for="tvShow in tvShows" :key="tvShow.id" class="single-card">
+                <div class="img-card">
                     <img :src="getImageUrl(tvShow.poster_path)" alt="Immagine non disponibile" />
+                    <div class="info-card">
+                        <h4>{{ tvShow.name }}</h4>
+                        <p><strong>Nome Originale:</strong> {{ tvShow.original_name }}</p>
+                        <p><strong>Voto Medio:</strong><span class="star" v-html="getStars(tvShow.vote_average)"></span>
+                            {{
+                                tvShow.vote_average }}</p>
+                        <p><strong>Descrizione:</strong> {{ tvShow.overview }}</p>
+                    </div>
                 </div>
-                <div class="info-card">
-                    <h4>{{ tvShow.name }}</h4>
-                    <p><strong>Nome Originale:</strong> {{ tvShow.original_name }}</p>
-                    <p><strong>Voto Medio:</strong> {{ tvShow.vote_average }}</p>
-                    <p><strong>Descrizione:</strong> {{ tvShow.overview }}</p>
-                </div>
-
-
             </li>
         </ul>
         <div class="up-more">
@@ -94,6 +99,10 @@ export default {
 </template>
 
 <style scoped>
+.container-card {
+    position: relative;
+}
+
 .info-card {
     justify-content: center;
     align-items: center;
@@ -101,15 +110,13 @@ export default {
     width: 20rem;
     border-radius: 0;
     background-color: black;
+    width: 100%;
 }
 
-.card {
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    width: 20rem;
-    border-radius: 0;
-
+.img-card {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 ul {
@@ -123,27 +130,61 @@ ul {
 }
 
 li {
+    position: relative;
+    overflow: hidden;
     margin: 20px 0;
-}
-
-img {
-    display: block;
-    width: 20rem;
-    display: block;
-
-}
-
-.movie-sc {
-    padding: 2rem;
-    justify-content: space-between;
-}
-
-.up-more {
-    padding: 2rem;
 }
 
 .info-card p {
     color: white;
-    margin: 5px 0;
+    text-align: center;
+}
+
+.show-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+
+}
+
+.info-card {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.img-card:hover .show-image {
+    opacity: 0;
+}
+
+.img-card:hover .info-card {
+    opacity: 1;
+}
+
+h4 {
+    color: white;
+}
+
+strong {
+    color: white;
+}
+
+.star {
+    color: orange;
+}
+
+h1 {
+    color: white;
 }
 </style>
